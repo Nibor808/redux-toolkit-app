@@ -1,7 +1,7 @@
 import './App.css';
 import {useAppDispatch, useAppSelector} from './app/hooks';
-import {fetchTodosAsync, resetTodos, selectTodos} from './redux/fetcherSlice';
-import {TodoView} from './features/Todo';
+import {fetchTodos, resetTodos, selectTodos} from './redux/fetcherSlice';
+import {TodoView} from './features/TodoView';
 import {AsyncValueState, ToDo} from './types';
 
 function App() {
@@ -15,14 +15,27 @@ function App() {
     <div className="app_root">
       <h1>Todo List</h1>
 
-      {hasToDos && todos.latestValue.map((todo: ToDo) => <TodoView todo={todo} />)}
+      {todos.state === AsyncValueState.error && <p>{todos.latestError?.message}</p>}
 
-      <button aria-label="Fetch todos" onClick={() => dispatch(fetchTodosAsync())}>
-        +
+      {hasToDos &&
+        todos.latestValue.map((todo: ToDo) => {
+          return (
+            <div key={todo.title}>
+              <TodoView todo={todo} />
+            </div>
+          );
+        })}
+
+      <button
+        aria-label="Fetch todos"
+        onClick={() => dispatch(fetchTodos())}
+        style={{marginRight: 40}}
+      >
+        Fetch Todos
       </button>
 
       <button aria-label="Reset todos" onClick={() => dispatch(resetTodos())}>
-        -
+        Clear Todos
       </button>
     </div>
   );
